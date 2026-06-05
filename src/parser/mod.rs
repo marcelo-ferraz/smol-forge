@@ -22,7 +22,7 @@ impl Parse for TweldDsl {
             render_type: RenderType::Identifier,
             tokens: Vec::new(),
         };
-        
+
         dsl = parse_stream(input, dsl, TokenParserState::Root, -1isize)?;
 
         Ok(dsl)

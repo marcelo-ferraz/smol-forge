@@ -10,15 +10,15 @@ use crate::models::{Modifier, Output, RenderType, WeldToken};
 pub fn build_string(parts: Vec<WeldToken>, render_type: &RenderType) -> String {
     let mut result = String::new();
     for part in parts {
-        let partial = build_from_token(part);                
+        let partial = build_from_token(part);
         result.push_str(&partial);
     }
-    
+
     // remove r# from identifiers but keep as is for literals
     if let RenderType::Identifier = render_type {
         return result.replace("r#", "");
     }
-    
+
     result
 }
 
