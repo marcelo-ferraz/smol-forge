@@ -28,8 +28,8 @@ pub fn scan_tokens(input: TokenStream) -> syn::Result<TokenStream> {
                         };
 
                         let dsl: TweldDsl = parse2(bracket_group.stream())?;
-
-                        let result = build_string(dsl.tokens);
+                        
+                        let result = build_string(dsl.tokens, &dsl.render_type);
 
                         match dsl.render_type {
                             RenderType::Identifier => {
