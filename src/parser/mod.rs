@@ -45,14 +45,18 @@ fn parse_stream(
         match state {
             TokenParserState::Root => {
                 if input.peek(syn::token::Paren) {
+                    if !words.is_empty() {
+                        parse_words(&mut dsl, &state, &mut words);
+                    }
                     parse_concat_group(input, &mut dsl, depth)?;
-
                     continue;
                 }
 
                 if input.peek(syn::token::Bracket) {
+                    if !words.is_empty() {
+                        parse_words(&mut dsl, &state, &mut words);
+                    }
                     parse_list_group(input, &mut dsl, depth)?;
-
                     continue;
                 }
 
@@ -98,12 +102,18 @@ fn parse_stream(
             TokenParserState::InsideGroup(_) => {
                 while !input.is_empty() {
                     if input.peek(syn::token::Paren) {
+                        if !words.is_empty() {
+                            parse_words(&mut dsl, &state, &mut words);
+                        }
                         parse_concat_group(input, &mut dsl, depth)?;
 
                         continue;
                     }
 
                     if input.peek(syn::token::Bracket) {
+                        if !words.is_empty() {
+                            parse_words(&mut dsl, &state, &mut words);
+                        }
                         parse_list_group(input, &mut dsl, depth)?;
 
                         continue;
