@@ -1,11 +1,14 @@
 [package]
 name = "tweld"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 authors = ["npb"]
 description = "Dynamic identifier generation for Rust macros. Tweld provides a flexible @[] syntax to \"fuse\" strings, case-conversions, and logic directly into your generated source code."
 repository = "https://github.com/marcelo-ferraz/tweld"
 license = "MIT OR Apache-2.0"
+
+[profile.dev]
+debug = true
 
 [dependencies]
 syn = "2.0.117"
