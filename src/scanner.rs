@@ -8,7 +8,30 @@ use crate::parser::TweldDsl;
 
 pub(crate) const IDENT_EMPTY_MSG: &str = "The identifier is an empty string!";
 
+fn contains_at(stream: &TokenStream) -> bool {
+    for token in stream.clone().into_iter() {
+        match token {
+            TokenTree::Punct(ref p) if p.as_char() == '@' => return true,
+            TokenTree::Group(g) => {
+                if contains_at(&g.stream()) {
+                    return true;
+                }
+            }
+            _ => {}
+        }
+    }
+    false
+}
+
 pub fn scan_tokens(input: TokenStream) -> syn::Result<TokenStream> {
+    if !input
+        .clone()
+        .into_iter()
+        .any(|t| matches!(t, TokenTree::Punct(ref p) if p.as_char() == '@'))
+    {
+        return Ok(input);
+    }
+
     let mut output = Vec::new();
     let mut tokens = input.into_iter().peekable();
 
@@ -58,10 +81,14 @@ pub fn scan_tokens(input: TokenStream) -> syn::Result<TokenStream> {
             }
 
             TokenTree::Group(g) => {
-                let inner_expanded = scan_tokens(g.stream())?;
-                let mut new_group = Group::new(g.delimiter(), inner_expanded);
-                new_group.set_span(g.span());
-                output.push(TokenTree::Group(new_group));
+                if contains_at(&g.stream()) {
+                    let inner_expanded = scan_tokens(g.stream())?;
+                    let mut new_group = Group::new(g.delimiter(), inner_expanded);
+                    new_group.set_span(g.span());
+                    output.push(TokenTree::Group(new_group));
+                } else {
+                    output.push(TokenTree::Group(g));
+                }
             }
 
             t => {
